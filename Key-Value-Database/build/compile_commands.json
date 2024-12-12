@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/apple/Desktop/Programming/ACMOJ/BookStore/MemoryRiver_Easy/build",
+  "command": "/usr/bin/clang++   -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.1.sdk -o CMakeFiles/MemoryRiver_Easy.dir/main.cpp.o -c /Users/apple/Desktop/Programming/ACMOJ/BookStore/MemoryRiver_Easy/main.cpp",
+  "file": "/Users/apple/Desktop/Programming/ACMOJ/BookStore/MemoryRiver_Easy/main.cpp",
+  "output": "CMakeFiles/MemoryRiver_Easy.dir/main.cpp.o"
+}
+]

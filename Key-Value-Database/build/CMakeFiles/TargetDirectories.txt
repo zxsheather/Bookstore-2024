@@ -1,0 +1,3 @@
+/Users/apple/Desktop/Programming/ACMOJ/BookStore/MemoryRiver_Easy/build/CMakeFiles/MemoryRiver_Easy.dir
+/Users/apple/Desktop/Programming/ACMOJ/BookStore/MemoryRiver_Easy/build/CMakeFiles/edit_cache.dir
+/Users/apple/Desktop/Programming/ACMOJ/BookStore/MemoryRiver_Easy/build/CMakeFiles/rebuild_cache.dir
