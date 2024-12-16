@@ -11,7 +11,7 @@
 #include "MemoryRiver.h"
 
 constexpr int MAX_STRING = 65;
-constexpr int BLOCK_SIZE = 1000;
+constexpr int BLOCK_SIZE = 4;
 
 struct Key_Value {
   char key[MAX_STRING];
@@ -48,7 +48,10 @@ struct Index {
   char min_key[MAX_STRING];
   char max_key[MAX_STRING];
 
-  Index(): address(0), next(-1) {
+  //保存数组大小
+  size_t array_size;
+
+  Index(): address(0), next(-1),array_size(0) {
     memset(min_key, 0, sizeof(min_key));
     memset(max_key, 0, sizeof(max_key));
   }

@@ -1,2 +1,8 @@
 requirements.md
 .DS_Store
+/.vscode
+/build
+/cmake-build-debug
+/.cache
+/Test
+/.idea
