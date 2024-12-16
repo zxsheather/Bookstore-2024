@@ -12,6 +12,7 @@ requirements.md
 .idea/
 *.iml
 
+
 # 忽略编译输出文件
 *.o
 *.out
@@ -36,6 +37,7 @@ output.txtrequirements.md
 .vscode/
 *.code-workspace
 .idea/
+Key-Value-Database/.cache/
 *.iml
 *.o
 *.out
@@ -49,3 +51,4 @@ Key-Value-Database/cmake-build-debug/
 Key-Value-Database/Test/
 Key-Value-Database/output/
 output.txt
+
