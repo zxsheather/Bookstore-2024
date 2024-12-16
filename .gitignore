@@ -1,8 +1,51 @@
+# 忽略需求文档
 requirements.md
+
+# 忽略系统文件
 .DS_Store
-/.vscode
-/build
-/cmake-build-debug
-/.cache
-/Test
-/.idea
+
+# 忽略 VSCode 配置文件
+.vscode/
+*.code-workspace
+
+# 忽略 IDE 配置文件
+.idea/
+*.iml
+
+# 忽略编译输出文件
+*.o
+*.out
+*.a
+*.so
+*.exe
+*.dll
+
+# 忽略构建目录
+build/
+Key-Value-Database/build/
+Key-Value-Database/cmake-build-debug/
+
+# 忽略测试目录
+Test/
+Key-Value-Database/Test/
+
+# 忽略输出文件
+Key-Value-Database/output/
+output.txtrequirements.md
+.DS_Store
+.vscode/
+*.code-workspace
+.idea/
+*.iml
+*.o
+*.out
+*.a
+*.so
+*.exe
+*.dll
+build/
+Key-Value-Database/build/
+Key-Value-Database/cmake-build-debug/
+Key-Value-Database/Test/
+Key-Value-Database/output/
+output.txt
