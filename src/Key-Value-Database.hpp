@@ -2,26 +2,29 @@
 // Created by apple on 24-12-9.
 //
 
-#ifndef KEY_VALUE_DATABASE_H
-#define KEY_VALUE_DATABASE_H
+#ifndef KEY_VALUE_DATABASE_HPP
+#define KEY_VALUE_DATABASE_HPP
 
 #include<string>
 #include<cstring>
 #include<fstream>
-#include "MemoryRiver.h"
+#include<vector>
+#include "MemoryRiver.hpp"
 
 constexpr int MAX_STRING = 65;
 constexpr int BLOCK_SIZE = 4;
 
+template<typename T>
 struct Key_Value {
   char key[MAX_STRING];
-  int value;
+  T value;
 
-  Key_Value(): value(0) {
+  Key_Value(){
+    value=T();
     memset(key, 0, sizeof(key));
   }
 
-  Key_Value(const std::string &key, const int value): value(value) {
+  Key_Value(const std::string &key, const T value): value(value) {
     strcpy(this->key, key.c_str());
   }
 
@@ -57,25 +60,27 @@ struct Index {
   }
 };
 
+template<typename T>
 struct Block {
-  Key_Value array[BLOCK_SIZE];
+  Key_Value<T> array[BLOCK_SIZE];
   size_t array_size;
 
   Block(): array_size(0) {
   };
 };
 
+template<typename T>
 class File_Storage {
 private:
   std::string filename;
   MemoryRiver<Index,2> index_file;
-  MemoryRiver<Block,0> block_file;
+  MemoryRiver<Block<T>,0> block_file;
 
 public:
   File_Storage(const std::string filename = "database"): filename(filename),index_file(filename + "_index.dat"),
                                                          block_file(filename + "_block.dat") {
     Index index_blank;
-    Block block_blank;
+    Block<T> block_blank;
     if(!index_file.exist()) {
       index_file.initialise();
       block_file.initialise();
@@ -86,9 +91,11 @@ public:
   };
   ~File_Storage()=default;
 
-  void Insert(const std::string &key,const int &value);
-  void Delete(const std::string &key,const int &value);
-  void Find(const std::string &key);
+  void Insert(const std::string &key,const T &value);
+  void Delete(const std::string &key,const T &value);
+  void Update(const std::string &key,const T &value,const T &new_value);
+  std::vector<T> Find(const std::string &key);
+
 
   void Initialize();
 };

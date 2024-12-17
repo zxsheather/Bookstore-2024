@@ -1,6 +1,6 @@
-//
-// Created by apple on 24-12-6.
-//
+//MemoryRiver.hpp
+//Encapsulate some file operations
+
 
 #ifndef MEMORYRIVER_H
 #define MEMORYRIVER_H

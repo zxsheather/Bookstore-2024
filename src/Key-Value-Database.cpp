@@ -3,17 +3,19 @@
 #include<iostream>
 #include<vector>
 #include<algorithm>
-#include "Key-Value-Database.h"
-#include "MemoryRiver.h"
+#include "Key-Value-Database.hpp"
+#include "MemoryRiver.hpp"
+#include "Account.hpp"
 
-void File_Storage::Insert(const std::string &key, const int &value) {
-  Key_Value kv(key,value);
+template<typename T>
+void File_Storage<T>::Insert(const std::string &key, const T &value) {
+  Key_Value<T> kv(key,value);
   int start=0;
   index_file.get_info(start,2);
   int index_pos=start;
   int block_pos=0;
   Index index;
-  Block block;
+  Block<T> block;
   int count;
   index_file.get_info(count,1);
   if(count==0) {
@@ -34,12 +36,12 @@ void File_Storage::Insert(const std::string &key, const int &value) {
       block_file.read(block,block_pos);
 
       if(block.array_size==BLOCK_SIZE) {
-        Block new_block;
+        Block<T> new_block;
         Index new_index;
         int mid=BLOCK_SIZE/2;
         for(int j=mid;j<block.array_size;++j) {
           new_block.array[j-mid]=block.array[j];
-          block.array[j]=(Key_Value){{},0};
+          block.array[j]=(Key_Value<T>){};
           new_block.array_size++;
         }
         block.array_size=mid;
@@ -104,15 +106,16 @@ void File_Storage::Insert(const std::string &key, const int &value) {
   }
 }
 
-void File_Storage::Delete(const std::string &key, const int &value) {
-  Key_Value kv(key,value);
+template<typename T>
+void File_Storage<T>::Delete(const std::string &key, const T &value) {
+  Key_Value<T> kv(key,value);
   int start=0;
   index_file.get_info(start,2);
   int index_pos=start;
   int prev_pos=-1;
   int prev_array_size=-1;
   Index index;
-  Block block;
+  Block<T> block;
   int count;
   index_file.get_info(count,1);
   for(int i=0;i<count;++i) {
@@ -140,11 +143,11 @@ void File_Storage::Delete(const std::string &key, const int &value) {
             index_file.write_info(count-1,1);
           }else if(prev_pos!=-1&&block.array_size<=BLOCK_SIZE/2&&prev_array_size<=BLOCK_SIZE/2){
             Index prev_index;
-            Block prev_block;
+            Block<T> prev_block;
             index_file.read(prev_index,prev_pos);
             block_file.read(prev_block,prev_index.address);
             prev_index.next=index.next;
-            Block new_prev_block;
+            Block<T> new_prev_block;
 
             int k=0,l=0,r=0;
             while(true) {
@@ -203,14 +206,15 @@ void File_Storage::Delete(const std::string &key, const int &value) {
   }
 }
 
-void File_Storage::Find(const std::string &key) {
+template<typename T>
+std::vector<T> File_Storage<T>::Find(const std::string &key) {
   int start=0,count=0;
-  std::vector<int> result;
+  std::vector<T> result;
   index_file.get_info(start,2);
   index_file.get_info(count,1);
   int index_pos=start;
   Index index;
-  Block block;
+  Block<T> block;
   bool found=false;
   for(int i=0;i<count;++i) {
     index_file.read(index,index_pos);
@@ -239,20 +243,42 @@ void File_Storage::Find(const std::string &key) {
     }
     index_pos=index.next;
   }
-  if(!found) {
-    std::cout<<"null";
-  }else {
-    std::ranges::sort(result);
-    for(int k : result) {
-      std::cout<<k<<' ';
-    }
-  }
-  std::cout<<'\n';
+  return result;
 }
 
-void File_Storage::Initialize() {
+template<typename T>
+void File_Storage<T>::Update(const std::string &key, const T &value, const T &new_value) {
+    Key_Value<T> kv(key,value);
+    int start=0;
+    index_file.get_info(start,2);
+    int index_pos=start;
+    Index index;
+    Block<T> block;
+    int count;
+    index_file.get_info(count,1);
+    for(int i=0;i<count;++i) {
+        index_file.read(index,index_pos);
+        if(strcmp(index.min_key,key.c_str())>0) {
+            return;
+        }else if(strcmp(index.max_key,key.c_str())>=0) {
+            block_file.read(block,index.address);
+            for(int j=0;j<block.array_size;++j) {
+                if(block.array[j]==kv) {
+                    block.array[j].value=new_value;
+                    block_file.update(block,index.address);
+                    return;
+                }
+            }
+        }
+        index_pos=index.next;
+    }
+}
+
+
+template<typename T>
+void File_Storage<T>::Initialize() {
   Index index_blank;
-  Block block_blank;
+  Block<T> block_blank;
   index_file.initialise();
   block_file.initialise();
   index_blank.address=block_file.write(block_blank);
@@ -260,6 +286,7 @@ void File_Storage::Initialize() {
   index_file.write_info(1,1);
 }
 
+template class File_Storage<User_Info>;
 
 
 

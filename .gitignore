@@ -29,6 +29,7 @@ Key-Value-Database/cmake-build-debug/
 # 忽略测试目录
 Test/
 Key-Value-Database/Test/
+bookstore-testcases/
 
 # 忽略输出文件
 Key-Value-Database/output/
