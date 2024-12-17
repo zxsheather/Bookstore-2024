@@ -23,22 +23,21 @@ requirements.md
 
 # 忽略构建目录
 build/
-Key-Value-Database/build/
-Key-Value-Database/cmake-build-debug/
+
 
 # 忽略测试目录
 Test/
-Key-Value-Database/Test/
+
 bookstore-testcases/
 
 # 忽略输出文件
-Key-Value-Database/output/
+
 output.txtrequirements.md
 .DS_Store
 .vscode/
 *.code-workspace
 .idea/
-Key-Value-Database/.cache/
+.cache/
 *.iml
 *.o
 *.out
@@ -47,9 +46,5 @@ Key-Value-Database/.cache/
 *.exe
 *.dll
 build/
-Key-Value-Database/build/
-Key-Value-Database/cmake-build-debug/
-Key-Value-Database/Test/
-Key-Value-Database/output/
 output.txt
 
