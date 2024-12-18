@@ -45,6 +45,7 @@ output.txtrequirements.md
 *.so
 *.exe
 *.dll
+*.dat
 build/
 output.txt
 
