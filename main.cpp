@@ -19,18 +19,18 @@ std::vector<std::string> CommandParser(std::string command,char delimiter){
   while(getline(ss,temp,delimiter)){
     result.push_back(temp);
   }
-  result.erase(result.begin());
   return result;
 }
 
 int main() {
-  freopen("/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/bookstore-testcases/basic/testcase2.in","r",stdin);
+  freopen("/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/bookstore-testcases/basic/testcase3.in","r",stdin);
   freopen("output.txt","w",stdout);
   std::stack <std::pair<std::string,int>> loginStack;
   bool loginFlag = false;
   int login_privilege = 0;
   std::string command;
   std::ifstream temp("account_file_index.dat", std::ios::binary);
+  
   bool flag=false;
   if(!temp){
     flag=true;
@@ -41,8 +41,8 @@ int main() {
     temp.close();
   }
   File_Storage<User_Info> account_file("account_file");
-  //account_file.Initialize();
-  if(flag){
+  account_file.Initialize();
+  if(flag||true){
     User_Info user_info;
     user_info.privilege=7;
     strcpy(user_info.userid,"root");
@@ -52,13 +52,14 @@ int main() {
   }
   while(true) {
     try{
-      std::cin>>command;
+      std::string line;
+      getline(std::cin,line);
+      std::vector<std::string> input=CommandParser(line,' ');
+      std::string command=input[0];
+      input.erase(input.begin());
       if(command=="quit"||command=="exit") {
         exit(0);
       }else if(command=="su"){
-        std::string line;
-        getline(std::cin,line);
-        std::vector<std::string> input=CommandParser(line,' ');
         if(input.size()>=3||input.size()==0){
           throw InvalidOpertionException();
         }
@@ -68,7 +69,7 @@ int main() {
           throw InvalidOpertionException();
         }else{
           User_Info user_info=result[0];
-          if(user_info.privilege>login_privilege&&loginFlag){
+          if(login_privilege>user_info.privilege&&loginFlag){
             loginStack.push(std::make_pair(user_info.userid, user_info.privilege));
             loginFlag=true;
             login_privilege=user_info.privilege;
@@ -86,6 +87,9 @@ int main() {
           }
         } 
       }else if(command=="logout"){
+        if(input.size()!=0){
+          throw InvalidOpertionException();
+        }
         if(loginStack.empty()){
           throw InvalidOpertionException();
         }else{
@@ -98,18 +102,12 @@ int main() {
           }
         }
       }else if(command=="register"){
-        std::string line;
-        getline(std::cin,line);
-        std::vector<std::string> input=CommandParser(line,' ');
         if(input.size()!=3){
           throw InvalidOpertionException();
         }
         User_Info user_info(input[0],input[1],input[2],1);
         account_file.Insert(user_info.userid,user_info);
       }else if(command=="passwd"){
-        std::string line;
-        getline(std::cin,line);
-        std::vector<std::string> input=CommandParser(line,' ');
         if(login_privilege==7&&input.size()==2){
           std::vector<User_Info> result=account_file.Find(input[0]);
           if(result.size()==0){
@@ -136,9 +134,6 @@ int main() {
           throw InvalidOpertionException();
         }
       }else if(command=="useradd"){
-        std::string line;
-        getline(std::cin,line);
-        std::vector<std::string> input=CommandParser(line,' ');
         if(input.size()!=4){
           throw InvalidOpertionException();
         }else{
@@ -150,7 +145,7 @@ int main() {
             if(login_privilege<=privilege){
               throw InvalidOpertionException();
             }
-            User_Info user_info(input[0],input[1],input[2],privilege);
+            User_Info user_info(input[0],input[1],input[3],privilege);
             account_file.Insert(user_info.userid,user_info);
           }
         }
@@ -158,9 +153,6 @@ int main() {
         if(login_privilege!=7){
           throw InvalidOpertionException();
         }
-        std::string line;
-        getline(std::cin,line);
-        std::vector<std::string> input=CommandParser(line,' ');
         if(input.size()!=1){
           throw InvalidOpertionException();
         }else{
@@ -170,8 +162,8 @@ int main() {
           }else{
             std::stack<std::pair<std::string, int>> tempStack = loginStack;
             while (!tempStack.empty()) {
-                auto it = tempStack.top();
-                tempStack.pop();
+              auto it = tempStack.top();
+              tempStack.pop();
               if(it.first==input[0]){
                 throw InvalidOpertionException();
               }
@@ -179,8 +171,9 @@ int main() {
             account_file.Delete(input[0],result[0]);
           }
         }
+      }else{
+        throw InvalidOpertionException();
       }
-
     }catch(InvalidOpertionException &e){
       std::cout<<e.what()<<std::endl;
     }
