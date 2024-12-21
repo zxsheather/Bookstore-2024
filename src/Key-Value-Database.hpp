@@ -7,7 +7,6 @@
 
 #include<string>
 #include<cstring>
-#include<fstream>
 #include<vector>
 #include "MemoryRiver.hpp"
 
@@ -96,8 +95,12 @@ public:
   void Update(const std::string &key,const T &value,const T &new_value);
   std::vector<T> Find(const std::string &key);
   std::vector<T> FindAll();
+  std::vector<T> FindFirstN(const int &n);
   void Initialize();
 };
 
 
-#endif //KEY_VALUE_DATABASE_H
+
+#endif //KEY_VALUE_DATABASE_HPP
+
+

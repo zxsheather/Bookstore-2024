@@ -22,4 +22,6 @@ std::vector<std::pair<std::string,std::string>> Modification_Parser(const std::v
 
 std::string remove_quote(const std::string &s);
 
+std::string intToFixedString(int value,int length=6);
+
 #endif

@@ -3,11 +3,11 @@
 #include "Key-Value-Database.hpp"
 
 #include <algorithm>
-#include <iostream>
 #include <vector>
 
 #include "Data.hpp"
 #include "MemoryRiver.hpp"
+#include "Exception.hpp"
 
 template <typename T>
 void File_Storage<T>::Insert(const std::string &key, const T &value) {
@@ -275,6 +275,33 @@ std::vector<T> File_Storage<T>::FindAll() {
     for (int j = 0; j < block.array_size; ++j) {
       result.push_back(block.array[j].value);
     }
+    index_pos = index.next;
+  }
+  return result;
+}
+
+template <typename T>
+std::vector<T> File_Storage<T>::FindFirstN(const int &n){
+  int start=0,count=0;
+  std::vector<T> result;
+  index_file.get_info(start,2);
+  index_file.get_info(count,1);
+  int index_pos=start;
+  for(int i=0;i<count;++i){
+    Index index;
+    index_file.read(index,index_pos);
+    Block<T> block;
+    block_file.read(block,index.address);
+    for(int j=0;j<block.array_size;++j){
+      result.push_back(block.array[j].value);
+      if(result.size()==n){
+        return result;
+      }
+    }
+    index_pos=index.next;
+  }
+  if(result.size()<n){
+    throw InvalidOpertionException();
   }
   return result;
 }
@@ -293,3 +320,4 @@ void File_Storage<T>::Initialize() {
 template class File_Storage<User_Info>;
 template class File_Storage<Book_Info>;
 template class File_Storage<std::string>;
+template class File_Storage<Transaction_Info>;

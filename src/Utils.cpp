@@ -164,3 +164,11 @@ std::string remove_quote(const std::string &s){
   }
 }
 
+std::string intToFixedString(int value,int length){
+  std::string result=std::to_string(value);
+  while(result.size()<length){
+	result="0"+result;
+  }
+  return result;
+}
+
