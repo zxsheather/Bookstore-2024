@@ -95,8 +95,7 @@ public:
   void Delete(const std::string &key,const T &value);
   void Update(const std::string &key,const T &value,const T &new_value);
   std::vector<T> Find(const std::string &key);
-
-
+  std::vector<T> FindAll();
   void Initialize();
 };
 

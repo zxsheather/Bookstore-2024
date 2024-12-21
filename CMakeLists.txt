@@ -4,6 +4,6 @@ project(BookStore2024)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(code main.cpp
-        src/Account.cpp
         src/Key-Value-Database.cpp
+        src/Utils.cpp
 )
