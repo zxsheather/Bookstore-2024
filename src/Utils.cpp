@@ -62,7 +62,9 @@ bool is_positive_integer(const std::string &s){
 bool is_positive_number(const std::string &s){
   bool point=false;
 	if(s[0]=='0'){
-		return false;
+		if(s[1]!='.'){
+			return false;
+		}
 	}
   for(int i=0;i<s.size();i++){
     if(s[i]=='.'&&!point&&i!=0){

@@ -27,8 +27,8 @@ build/
 
 # 忽略测试目录
 Test/
-
 bookstore-testcases/
+delete.cpp
 
 # 忽略输出文件
 
@@ -48,4 +48,5 @@ output.txtrequirements.md
 *.dat
 build/
 output.txt
+output_clean.txt
 

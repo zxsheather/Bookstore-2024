@@ -18,18 +18,17 @@
 
 
 int main() {
-  freopen(
-      "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/"
-      "bookstore-testcases/basic/testcase6.in",
-      "r", stdin);
-  freopen(
-      "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/"
-      "output.txt",
-      "w", stdout);
+  // freopen(
+  //     "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/bookstore-testcases/basic/testcase1.in",
+  //     "r", stdin);
+  // freopen(
+  //     "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/"
+  //     "output.txt",
+  //     "w", stdout);
   std::stack<std::pair<std::string, int>> loginStack;
   bool loginFlag = false;
   int login_privilege = 0;
-  int operator_time = 10000;
+  int operator_time = 100000;
   std::string selected_book = "";
   std::string command;
   std::ifstream temp("account_file_index.dat", std::ios::binary);
@@ -44,8 +43,7 @@ int main() {
     temp.close();
   }
   File_Storage<User_Info> account_file("account_file");
-  account_file.Initialize();
-  if (flag || true) {
+  if (flag) {
     User_Info user_info;
     user_info.privilege = 7;
     strcpy(user_info.userid, "root");
@@ -54,20 +52,27 @@ int main() {
     account_file.Insert(user_info.userid, user_info);
   }
   File_Storage<std::string> name_file("name_file");
-  name_file.Initialize();
   File_Storage<std::string> author_file("author_file");
-  author_file.Initialize();
   File_Storage<std::string> keyword_file("keyword_file");
-  keyword_file.Initialize();
   File_Storage<Book_Info> book_file("book_file");
-  book_file.Initialize();
   File_Storage<Transaction_Info> transaction_file("transaction_file");
-  transaction_file.Initialize();
-  while (true) {
+  // book_file.Initialize();
+  // keyword_file.Initialize();
+  // author_file.Initialize();
+  // name_file.Initialize();
+  // transaction_file.Initialize();
+  // account_file.Initialize();
+  
+  std::string line;
+  bool includelinenumber = true;
+  int linenumber=0;
+  while (getline(std::cin, line)) {
     try {
-      std::string line;
-      getline(std::cin, line);
+      linenumber++;
       std::vector<std::string> input = CommandParser(line, ' ');
+      if(input.size()==0){
+        throw InvalidOpertionException();
+      }
       std::string command = input[0];
       input.erase(input.begin());
       if (command == "quit" || command == "exit") {
@@ -207,9 +212,11 @@ int main() {
                 expense-=i.total_price;
               }
             }
+            //std::cout<<"Line"<<linenumber;
             std::cout<<std::fixed<<std::setprecision(2)<<"+ "<<revenue<<" - "<<expense<<std::endl;
           }else if(input.size()==2){
             if(input[1]=="0"){
+              //std::cout<<"Line"<<linenumber<<": ";
               std::cout<<std::endl;
             }else if(!is_positive_integer(input[1])){
               throw InvalidOpertionException();
@@ -224,6 +231,7 @@ int main() {
                   expense-=i.total_price;
                 }
               }
+              //std::cout<<"Line"<<linenumber<<": ";
               std::cout<<std::fixed<<std::setprecision(2)<<"+ "<<revenue<<" - "<<expense<<std::endl;
             }
           }else{
@@ -238,10 +246,12 @@ int main() {
           if (input.size() == 0) {
             std::vector<Book_Info> result = book_file.FindAll();
             if (result.size() == 0) {
-              std::cout << "\n";
+              //std::cout<<"Line"<<linenumber<<": " ;
+              std::cout<< "\n";
             } else {
               for (auto &i : result) {
-                std::cout << std::fixed << std::setprecision(2) << i.ISBN << '\t'
+                //std::cout<<"Line"<<linenumber<<": ";
+                std::cout<< std::fixed << std::setprecision(2) << i.ISBN << '\t'
                           << i.bookname << '\t' << i.author << '\t' << i.keyword
                           << '\t' << i.price << '\t' << i.quantity << std::endl;
               }
@@ -260,10 +270,12 @@ int main() {
             if (order == "-ISBN") {
               std::vector<Book_Info> result = book_file.Find(input[0]);
               if (result.size() == 0) {
-                std::cout << "\n";
+                //std::cout<<"Line"<<linenumber<<": ";
+                std::cout<< "\n";
               } else {
                 for (auto &i : result) {
-                  std::cout << std::fixed << std::setprecision(2) << i.ISBN
+                  //std::cout<<"Line"<<linenumber<<": ";
+                  std::cout<< std::fixed << std::setprecision(2) << i.ISBN
                             << '\t' << i.bookname << '\t' << i.author << '\t'
                             << i.keyword << '\t' << i.price << '\t' << i.quantity
                             << std::endl;
@@ -274,13 +286,15 @@ int main() {
               std::vector<std::string> ISBN_result =
                   name_file.Find(remove_quote(input[0]));
               if (ISBN_result.size() == 0) {
-                std::cout << "\n";
+                //std::cout<<"Line"<<linenumber<<": ";
+                std::cout<< "\n";
               } else {
                 std::sort(ISBN_result.begin(), ISBN_result.end());
                 for (auto &i : ISBN_result) {
                   std::vector<Book_Info> result = book_file.Find(i);
                   for (auto &j : result) {
-                    std::cout << std::fixed << std::setprecision(2) << j.ISBN
+                    //std::cout<<"Line"<<linenumber<<": ";
+                    std::cout<< std::fixed << std::setprecision(2) << j.ISBN
                               << '\t' << j.bookname << '\t' << j.author << '\t'
                               << j.keyword << '\t' << j.price << '\t'
                               << j.quantity << std::endl;
@@ -292,13 +306,15 @@ int main() {
               std::vector<std::string> ISBN_result =
                   author_file.Find(remove_quote(input[0]));
               if (ISBN_result.size() == 0) {
-                std::cout << "\n";
+                //std::cout<<"Line"<<linenumber<<": ";
+                std::cout<<"\n";
               } else {
                 std::sort(ISBN_result.begin(), ISBN_result.end());
                 for (auto &i : ISBN_result) {
                   std::vector<Book_Info> result = book_file.Find(i);
                   for (auto &j : result) {
-                    std::cout << std::fixed << std::setprecision(2) << j.ISBN
+                    //std::cout<<"Line"<<linenumber<<": ";
+                    std::cout<<std::fixed << std::setprecision(2) << j.ISBN
                               << '\t' << j.bookname << '\t' << j.author << '\t'
                               << j.keyword << '\t' << j.price << '\t'
                               << j.quantity << std::endl;
@@ -314,13 +330,15 @@ int main() {
               std::vector<std::string> ISBN_result =
                   keyword_file.Find(remove_quote(keyword[0]));
               if (ISBN_result.size() == 0) {
-                std::cout << "\n";
+                //std::cout<<"Line"<<linenumber<<": ";
+                std::cout<< "\n";
               } else {
                 std::sort(ISBN_result.begin(), ISBN_result.end());
                 for (auto &i : ISBN_result) {
                   std::vector<Book_Info> result = book_file.Find(i);
                   for (auto &j : result) {
-                    std::cout << std::fixed << std::setprecision(2) << j.ISBN
+                    //std::cout<<"Line"<<linenumber<<": ";
+                    std::cout<<std::fixed << std::setprecision(2) << j.ISBN
                               << '\t' << j.bookname << '\t' << j.author << '\t'
                               << j.keyword << '\t' << j.price << '\t'
                               << j.quantity << std::endl;
@@ -362,7 +380,8 @@ int main() {
         transaction_info.quantity = std::stoi(input[1]);
         transaction_info.total_price = book_info.price * transaction_info.quantity;
         transaction_file.Insert(transaction_info.time, transaction_info);
-        std::cout << std::fixed << std::setprecision(2)
+        //std::cout<<"Line"<<linenumber<<": ";
+        std::cout<<std::fixed << std::setprecision(2)
                   << book_info.price * std::stoi(input[1]) << std::endl;
       } else if (command == "select") {
         if (login_privilege < 3) {
@@ -389,6 +408,10 @@ int main() {
         for (int i = 0; i < order.size(); ++i) {
           File_Storage<Book_Info> book_file("book_file");
           if (order[i].first == "-ISBN") {
+            std::vector<Book_Info> temp = book_file.Find(order[i].second);
+            if (temp.size() != 0) {
+              throw InvalidOpertionException();
+            }
             std::vector<Book_Info> result = book_file.Find(selected_book);
             Book_Info book_info = result[0];
             strcpy(book_info.ISBN, order[i].second.c_str());
@@ -416,7 +439,7 @@ int main() {
             strcpy(book_info.ISBN, selected_book.c_str());
             book_file.Update(selected_book, result[0], book_info);
             File_Storage<std::string> name_file("name_file");
-            name_file.Delete(book_info.bookname, selected_book);
+            name_file.Delete(result[0].bookname, selected_book);
             name_file.Insert(order[i].second, selected_book);
           } else if (order[i].first == "-author") {
             std::vector<Book_Info> result = book_file.Find(selected_book);
@@ -425,7 +448,7 @@ int main() {
             strcpy(book_info.ISBN, selected_book.c_str());
             book_file.Update(selected_book, result[0], book_info);
             File_Storage<std::string> author_file("author_file");
-            author_file.Delete(book_info.author, selected_book);
+            author_file.Delete(result[0].author, selected_book);
             author_file.Insert(order[i].second, selected_book);
 
           } else if (order[i].first == "-keyword") {
@@ -486,7 +509,8 @@ int main() {
         throw InvalidOpertionException();
       }
     } catch (InvalidOpertionException &e) {
-      std::cout << e.what() << std::endl;
+      //std::cout<<"Line"<<linenumber<<": ";
+      std::cout<<e.what() << std::endl;
     }
   }
 }

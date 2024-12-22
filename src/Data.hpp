@@ -156,4 +156,11 @@ struct Transaction_Info {
 	}
 };
 
+struct Operation{
+  char time[11];
+  char userid[31];
+  int privilege;
+  char operation[31];
+};
+
 #endif

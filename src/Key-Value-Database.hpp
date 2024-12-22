@@ -88,6 +88,8 @@ public:
       index_file.write_info(1,1);
     }
   };
+  
+
   ~File_Storage()=default;
 
   void Insert(const std::string &key,const T &value);
