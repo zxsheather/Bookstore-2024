@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <algorithm>
 //#include <chrono>
 
 #include "src/Data.hpp"
@@ -465,7 +466,7 @@ struct Login_Info{
         //auto end3 = std::chrono::system_clock::now();
         //book_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end3-start3).count();
         if(state&3){
-          auto start4 = std::chrono::system_clock::now();
+          //auto start4 = std::chrono::system_clock::now();
           if((state&2)==0){
             name_file.Update(result[0].bookname, selected_book, temp_selected_book);
           }else{
@@ -474,8 +475,8 @@ struct Login_Info{
             }
             name_file.Insert(book_info.bookname, temp_selected_book);
           }
-          auto end4 = std::chrono::system_clock::now();
-          name_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end4-start4).count();
+          //auto end4 = std::chrono::system_clock::now();
+          //name_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end4-start4).count();
         }
         if(state&5){
           //auto start5 = std::chrono::system_clock::now();
