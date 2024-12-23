@@ -6,6 +6,7 @@
 #include<vector>
 #include<string>
 #include<sstream>
+#include<algorithm>
 
 std::vector<std::string> CommandParser(std::string command,char delimiter){
   std::vector<std::string> result;
