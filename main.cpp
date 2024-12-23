@@ -18,15 +18,15 @@
 
 
 int main() {
-  long long time1=0;
-  long long time2=0;
-  long long book_file_time=0;
-  long long keyword_file_time=0;
-  long long author_file_time=0;
-  long long name_file_time=0;
-  // freopen(
-  //     "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/bookstore-testcases/robust/testcase3.in",
-  //     "r", stdin);
+  // long long time1=0;
+  // long long time2=0;
+  // long long book_file_time=0;
+  // long long keyword_file_time=0;
+  // long long author_file_time=0;
+  // long long name_file_time=0;
+  freopen(
+      "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/bookstore-testcases/basic/testcase4.in",
+      "r", stdin);
   // freopen(
   //     "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/"
   //     "output.txt",
@@ -512,10 +512,10 @@ struct Login_Info{
         //auto end2 = std::chrono::system_clock::now();
         //time2+=std::chrono::duration_cast<std::chrono::milliseconds>(end2-start2).count();
       } else if (command == "import") {
-        std::string selected_book = loginStack.back().selected_book;
         if (login_privilege < 3) {
           throw InvalidOperationException();
         }
+        std::string selected_book = loginStack.back().selected_book;
         if (selected_book == "") {
           throw InvalidOperationException();
         }
