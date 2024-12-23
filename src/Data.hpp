@@ -5,6 +5,16 @@
 
 #include <string>
 
+
+struct Login_Info {
+    std::string user_id;
+    int privilege;
+    std::string selected_book;
+    Login_Info() : user_id(""), privilege(0), selected_book("") {}
+    Login_Info(std::string user_id, int privilege, std::string selected_book)
+        : user_id(user_id), privilege(privilege), selected_book(selected_book) {}
+  };
+
 struct User_Info {
   char userid[31];
   char password[31];

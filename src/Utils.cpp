@@ -61,11 +61,6 @@ bool is_positive_integer(const std::string &s){
 
 bool is_positive_number(const std::string &s){
   bool point=false;
-	if(s[0]=='0'){
-		if(s[1]!='.'){
-			return false;
-		}
-	}
   for(int i=0;i<s.size();i++){
     if(s[i]=='.'&&!point&&i!=0){
       point=true;
@@ -92,77 +87,96 @@ bool is_privilege(const std::string &s){
   return false;
 }
 
-std::vector<std::pair<std::string,std::string>> Modification_Parser(const std::vector<std::string> &input,const std::string &ISBN_){
-	bool visit[5]={false,false,false,false,false};
-	std::vector<std::pair<std::string,std::string>> result;
-	for(int i=0;i<input.size();++i){
-		int index=0;
-		std::string order_="";
-		while(index<input[i].size()&&input[i][index]!='='){
-			order_+=input[i][index];
-			index++;
-		}
-		if(index==input[i].size()||index==input[i].size()-1){
-			throw InvalidOpertionException(); 
-		}
-		index++;
-		
-		if(order_=="-ISBN"){
-			if(visit[0]||input[i].substr(index)==ISBN_){
-				throw InvalidOpertionException();
-			}
-			visit[0]=true;
-			result.push_back(std::make_pair(order_,input[i].substr(index)));
-		}else if(order_=="-name"){
-			if(visit[1]){
-				throw InvalidOpertionException();
-			}
-			visit[1]=true;
-			result.push_back(std::make_pair(order_,remove_quote(input[i].substr(index))));
-		}else if(order_=="-author"){
-			if(visit[2]){
-				throw InvalidOpertionException();
-			}
-			visit[2]=true;
-			result.push_back(std::make_pair(order_,remove_quote(input[i].substr(index))));
-		}else if(order_=="-keyword"){
-			if(visit[3]){
-				throw InvalidOpertionException();
-			}
-			
-			std::vector<std::string> keyword=CommandParser(remove_quote(input[i].substr(index)),'|');
+std::vector<std::pair<std::string, std::string>> Modification_Parser(
+    const std::vector<std::string> &input,
+    const std::string &ISBN_,
+    int &state,
+    std::vector<std::string> &keyword
+) {
+    bool visit[5] = {false, false, false, false, false};
+    state = 0;
+    std::vector<std::pair<std::string, std::string>> result;
+
+    for(const auto &item : input){
+        std::stringstream ss(item);
+        std::string order_;
+        std::string value;
+
+        if(!std::getline(ss, order_, '=')){
+            throw InvalidOperationException();
+        }
+        if(!std::getline(ss, value)){
+            throw InvalidOperationException();
+        }
+
+        if(order_ == "-ISBN"){
+            if(visit[0] || value == ISBN_){
+                throw InvalidOperationException();
+            }
+            visit[0] = true;
+            state += 1;
+            result.emplace_back(order_, value);
+        }else if(order_ == "-name"){
+            if(visit[1]){
+                throw InvalidOperationException();
+            }
+			value=remove_quote(value);
+            visit[1] = true;
+            state += 2;
+            result.emplace_back(order_, value);
+        }else if(order_ == "-author"){
+            if(visit[2]){
+                throw InvalidOperationException();
+            }
+			value=remove_quote(value);
+            visit[2] = true;
+            state += 4;
+            result.emplace_back(order_, value);
+        }else if(order_ == "-keyword"){
+            if(visit[3]){
+                throw InvalidOperationException();
+            }
+			value=remove_quote(value);
+            visit[3] = true;
+            state += 8;
+            std::stringstream ss_keyword(value);
+            std::string word;
+            while(std::getline(ss_keyword, word, '|')){
+                keyword.emplace_back(word);
+            }
 			std::sort(keyword.begin(),keyword.end());
-			for(int j=1;j<keyword.size();++j){
+			for(int j=1;j<keyword.size();j++){
 				if(keyword[j]==keyword[j-1]){
-					throw InvalidOpertionException();
+					throw InvalidOperationException();
 				}
 			}
-			visit[3]=true;
-			result.push_back(std::make_pair(order_,remove_quote(input[i].substr(index))));
-		}else if(order_=="-price"){
-			if(visit[4]){
-				throw InvalidOpertionException();
+			result.emplace_back(order_, value);
+        }else if(order_ == "-price"){
+            if(visit[4]){
+                throw InvalidOperationException();
+            }
+			if(!is_positive_number(value)){
+				throw InvalidOperationException();
 			}
-			if(!is_positive_number(input[i].substr(index))){
-				throw InvalidOpertionException();
-			}
-			visit[4]=true;
-			result.push_back(std::make_pair(order_,input[i].substr(index)));
-		}else{
-			throw InvalidOpertionException();
-		}
-	}
-	return result;
+            visit[4] = true;
+            state += 16;
+            result.emplace_back(order_, value);
+        }else{
+            throw InvalidOperationException();
+        }
+    }
+
+    return result;
 }
 
 std::string remove_quote(const std::string &s){
   if(s.size()<2){
-	throw InvalidOpertionException();
+	throw InvalidOperationException();
   }
   if(s[0]=='"'&&s[s.size()-1]=='"'){
 	return s.substr(1,s.size()-2);
   }else{
-	throw InvalidOpertionException();
+	throw InvalidOperationException();
   }
 }
 

@@ -1,6 +1,4 @@
-//
-// Created by apple on 24-12-9.
-//
+//Key-Value-Database.hpp
 
 #ifndef KEY_VALUE_DATABASE_HPP
 #define KEY_VALUE_DATABASE_HPP
@@ -11,7 +9,7 @@
 #include "MemoryRiver.hpp"
 
 constexpr int MAX_STRING = 65;
-constexpr int BLOCK_SIZE = 4;
+constexpr int BLOCK_SIZE = 100;
 
 template<typename T>
 struct Key_Value {
@@ -95,9 +93,10 @@ public:
   void Insert(const std::string &key,const T &value);
   void Delete(const std::string &key,const T &value);
   void Update(const std::string &key,const T &value,const T &new_value);
+  int Num();
   std::vector<T> Find(const std::string &key);
   std::vector<T> FindAll();
-  std::vector<T> FindFirstN(const int &n);
+  std::vector<T> FindFirstN(const int &n,bool &flag);
   void Initialize();
 };
 

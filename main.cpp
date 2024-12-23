@@ -5,31 +5,42 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <stack>
 #include <string>
 #include <utility>
 #include <vector>
+//#include <chrono>
 
 #include "src/Data.hpp"
 #include "src/Exception.hpp"
 #include "src/Key-Value-Database.hpp"
-#include "src/MemoryRiver.hpp"
 #include "src/Utils.hpp"
 
 
 int main() {
+  long long time1=0;
+  long long time2=0;
+  long long book_file_time=0;
+  long long keyword_file_time=0;
+  long long author_file_time=0;
+  long long name_file_time=0;
   // freopen(
-  //     "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/bookstore-testcases/basic/testcase1.in",
+  //     "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/bookstore-testcases/robust/testcase3.in",
   //     "r", stdin);
   // freopen(
   //     "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/"
   //     "output.txt",
   //     "w", stdout);
-  std::stack<std::pair<std::string, int>> loginStack;
+  
+struct Login_Info{
+  std::string user_id;
+  int privilege;
+  std::string selected_book;
+};
+
+  std::vector<Login_Info> loginStack;
   bool loginFlag = false;
   int login_privilege = 0;
   int operator_time = 100000;
-  std::string selected_book = "";
   std::string command;
   std::ifstream temp("account_file_index.dat", std::ios::binary);
 
@@ -56,74 +67,80 @@ int main() {
   File_Storage<std::string> keyword_file("keyword_file");
   File_Storage<Book_Info> book_file("book_file");
   File_Storage<Transaction_Info> transaction_file("transaction_file");
-  // book_file.Initialize();
-  // keyword_file.Initialize();
-  // author_file.Initialize();
-  // name_file.Initialize();
-  // transaction_file.Initialize();
-  // account_file.Initialize();
-  
+
   std::string line;
   bool includelinenumber = true;
   int linenumber=0;
+  bool flag1=true;
+  std::vector<Transaction_Info> temp_vector=transaction_file.FindFirstN(1,flag1);
+  if(flag1){
+    operator_time=std::stoi(temp_vector[0].time)-1;
+  }
   while (getline(std::cin, line)) {
     try {
       linenumber++;
+      // if(linenumber==389){
+      //   int a=1;
+      // }
       std::vector<std::string> input = CommandParser(line, ' ');
       if(input.size()==0){
-        throw InvalidOpertionException();
+        continue;
       }
       std::string command = input[0];
       input.erase(input.begin());
       if (command == "quit" || command == "exit") {
+        // std::cout<<"Time1: "<<time1<<std::endl;
+        // std::cout<<"Time2: "<<time2<<std::endl;
+        // std::cout<<"Book File Time: "<<book_file_time<<std::endl;
+        // std::cout<<"Keyword File Time: "<<keyword_file_time<<std::endl;
+        // std::cout<<"Author File Time: "<<author_file_time<<std::endl;
+        // std::cout<<"Name File Time: "<<name_file_time<<std::endl;
         exit(0);
       } else if (command == "su") {
         if (input.size() >= 3 || input.size() == 0) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         std::string user_id = input[0];
         std::vector<User_Info> result = account_file.Find(user_id);
         if (result.size() == 0) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         } else {
           User_Info user_info = result[0];
           if (login_privilege > user_info.privilege && loginFlag) {
-            loginStack.push(
-                std::make_pair(user_info.userid, user_info.privilege));
+            loginStack.emplace_back(user_info.userid, user_info.privilege,"");
             loginFlag = true;
             login_privilege = user_info.privilege;
           } else {
             if (input.size() == 1) {
-              throw InvalidOpertionException();
+              throw InvalidOperationException();
             }
             if (user_info.password == input[1]) {
-              loginStack.push(
-                  std::make_pair(user_info.userid, user_info.privilege));
+              loginStack.emplace_back(user_info.userid, user_info.privilege,"");
               loginFlag = true;
               login_privilege = user_info.privilege;
             } else {
-              throw InvalidOpertionException();
+              throw InvalidOperationException();
             }
           }
         }
       } else if (command == "logout") {
         if (input.size() != 0) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         if (loginStack.empty()) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         } else {
-          loginStack.pop();
+          loginStack.pop_back();
           if (loginStack.empty()) {
             loginFlag = false;
             login_privilege = 0;
           } else {
-            login_privilege = loginStack.top().second;
+            login_privilege = loginStack.back().privilege;
           }
         }
       } else if (command == "register") {
         if (input.size() != 3) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         User_Info user_info(input[0], input[1], input[2], 1);
         account_file.Insert(user_info.userid, user_info);
@@ -131,7 +148,7 @@ int main() {
         if (login_privilege == 7 && input.size() == 2) {
           std::vector<User_Info> result = account_file.Find(input[0]);
           if (result.size() == 0) {
-            throw InvalidOpertionException();
+            throw InvalidOperationException();
           } else {
             User_Info user_info = result[0];
             User_Info new_user_info(user_info.userid, input[1],
@@ -141,7 +158,7 @@ int main() {
         } else if (input.size() == 3) {
           std::vector<User_Info> result = account_file.Find(input[0]);
           if (result.size() == 0) {
-            throw InvalidOpertionException();
+            throw InvalidOperationException();
           } else {
             User_Info user_info = result[0];
             if (user_info.password == input[1]) {
@@ -149,26 +166,26 @@ int main() {
                                       user_info.username, user_info.privilege);
               account_file.Update(user_info.userid, user_info, new_user_info);
             } else {
-              throw InvalidOpertionException();
+              throw InvalidOperationException();
             }
           }
         } else {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
       } else if (command == "useradd") {
         if (input.size() != 4) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         } else {
           std::vector<User_Info> result = account_file.Find(input[0]);
           if (result.size() != 0) {
-            throw InvalidOpertionException();
+            throw InvalidOperationException();
           } else {
             if (!is_privilege(input[2])) {
-              throw InvalidOpertionException();
+              throw InvalidOperationException();
             }
             int privilege = std::stoi(input[2]);
             if (login_privilege <= privilege) {
-              throw InvalidOpertionException();
+              throw InvalidOperationException();
             }
             User_Info user_info(input[0], input[1], input[3], privilege);
             account_file.Insert(user_info.userid, user_info);
@@ -176,21 +193,19 @@ int main() {
         }
       } else if (command == "delete") {
         if (login_privilege != 7) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         if (input.size() != 1) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         } else {
           std::vector<User_Info> result = account_file.Find(input[0]);
           if (result.size() == 0) {
-            throw InvalidOpertionException();
+            throw InvalidOperationException();
           } else {
-            std::stack<std::pair<std::string, int>> tempStack = loginStack;
-            while (!tempStack.empty()) {
-              auto it = tempStack.top();
-              tempStack.pop();
-              if (it.first == input[0]) {
-                throw InvalidOpertionException();
+            std::vector<Login_Info> tempStack = loginStack;
+            for (auto &it : tempStack) {
+              if (it.user_id == input[0]) {
+                throw InvalidOperationException();
               }
             }
             account_file.Delete(input[0], result[0]);
@@ -199,7 +214,7 @@ int main() {
       } else if (command == "show") {
         if(input.size()>=1&&input[0]=="finance"){
           if(login_privilege<7){
-            throw InvalidOpertionException();
+            throw InvalidOperationException();
           }
           if(input.size()==1){
             std::vector<Transaction_Info> result=transaction_file.FindAll();
@@ -212,16 +227,20 @@ int main() {
                 expense-=i.total_price;
               }
             }
-            //std::cout<<"Line"<<linenumber;
+            //std::cout<<"Line"<<linenumber<<": ";
             std::cout<<std::fixed<<std::setprecision(2)<<"+ "<<revenue<<" - "<<expense<<std::endl;
           }else if(input.size()==2){
             if(input[1]=="0"){
               //std::cout<<"Line"<<linenumber<<": ";
               std::cout<<std::endl;
             }else if(!is_positive_integer(input[1])){
-              throw InvalidOpertionException();
+              throw InvalidOperationException();
             }else{
-              std::vector<Transaction_Info> result=transaction_file.FindFirstN(std::stoi(input[1]));
+              bool flag=true;
+              std::vector<Transaction_Info> result=transaction_file.FindFirstN(std::stoi(input[1]),flag);
+              if(!flag){
+                throw InvalidOperationException();
+              }
               double revenue=0;
               double expense=0;
               for(auto &i:result){
@@ -235,13 +254,12 @@ int main() {
               std::cout<<std::fixed<<std::setprecision(2)<<"+ "<<revenue<<" - "<<expense<<std::endl;
             }
           }else{
-            throw InvalidOpertionException();
+            throw InvalidOperationException();
           }
 
         }else{
-          File_Storage<Book_Info> book_file("book_file");
           if (login_privilege < 1) {
-            throw InvalidOpertionException();
+            throw InvalidOperationException();
           }
           if (input.size() == 0) {
             std::vector<Book_Info> result = book_file.FindAll();
@@ -265,7 +283,7 @@ int main() {
             }
             input[0] = input[0].substr(index + 1);
             if (input[0] == "") {
-              throw InvalidOpertionException();
+              throw InvalidOperationException();
             }
             if (order == "-ISBN") {
               std::vector<Book_Info> result = book_file.Find(input[0]);
@@ -282,7 +300,6 @@ int main() {
                 }
               }
             } else if (order == "-name") {
-              File_Storage<std::string> name_file("name_file");
               std::vector<std::string> ISBN_result =
                   name_file.Find(remove_quote(input[0]));
               if (ISBN_result.size() == 0) {
@@ -302,7 +319,6 @@ int main() {
                 }
               }
             } else if (order == "-author") {
-              File_Storage<std::string> author_file("author_file");
               std::vector<std::string> ISBN_result =
                   author_file.Find(remove_quote(input[0]));
               if (ISBN_result.size() == 0) {
@@ -324,7 +340,7 @@ int main() {
             } else if (order == "-keyword") {
               std::vector<std::string> keyword = CommandParser(input[0], '|');
               if (keyword.size() >= 2) {
-                throw InvalidOpertionException();
+                throw InvalidOperationException();
               }
               File_Storage<std::string> keyword_file("keyword_file");
               std::vector<std::string> ISBN_result =
@@ -346,28 +362,27 @@ int main() {
                 }
               }
             } else {
-              throw InvalidOpertionException();
+              throw InvalidOperationException();
             }
           } else {
-            throw InvalidOpertionException();
+            throw InvalidOperationException();
           }
         }
         
 
       } else if (command == "buy") {
         if (login_privilege < 1) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         if (input.size() != 2) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
-        File_Storage<Book_Info> book_file("book_file");
         std::vector<Book_Info> result = book_file.Find(input[0]);
         if (result.size() == 0) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         } else if (!is_positive_integer(input[1]) || std::stoi(input[1]) < 0 ||
                    result[0].quantity < std::stoi(input[1])) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         Book_Info book_info = result[0];
         book_info.quantity -= std::stoi(input[1]);
@@ -375,7 +390,7 @@ int main() {
         Transaction_Info transaction_info;
         strcpy(transaction_info.time, intToFixedString(operator_time).c_str());
         operator_time--;
-        strcpy(transaction_info.userid, loginStack.top().first.c_str());
+        strcpy(transaction_info.userid, loginStack.back().user_id.c_str());
         strcpy(transaction_info.ISBN, book_info.ISBN);
         transaction_info.quantity = std::stoi(input[1]);
         transaction_info.total_price = book_info.price * transaction_info.quantity;
@@ -385,112 +400,132 @@ int main() {
                   << book_info.price * std::stoi(input[1]) << std::endl;
       } else if (command == "select") {
         if (login_privilege < 3) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         if (input.size() != 1) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         File_Storage<Book_Info> book_file("book_file");
         std::vector<Book_Info> result = book_file.Find(input[0]);
+        Book_Info book_info;
+        strcpy(book_info.ISBN, input[0].c_str());
         if (result.size() == 0) {
-          book_file.Insert(input[0], Book_Info());
+          book_file.Insert(input[0], book_info);
         }
-        selected_book = input[0];
+        loginStack.back().selected_book = input[0];
       } else if (command == "modify") {
         if (login_privilege < 3) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
+        std::string selected_book=loginStack.back().selected_book;
         if (selected_book == "") {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
+        int state = 0;
+        std::vector<std::string> keyword;
+        //auto start1 = std::chrono::system_clock::now();
         std::vector<std::pair<std::string, std::string>> order =
-            Modification_Parser(input, selected_book);
+            Modification_Parser(input, selected_book,state,keyword);
+        std::vector<Book_Info> result = book_file.Find(selected_book);
+        Book_Info book_info=result[0];
+        std::string temp_selected_book=selected_book;
         for (int i = 0; i < order.size(); ++i) {
-          File_Storage<Book_Info> book_file("book_file");
           if (order[i].first == "-ISBN") {
             std::vector<Book_Info> temp = book_file.Find(order[i].second);
             if (temp.size() != 0) {
-              throw InvalidOpertionException();
+              throw InvalidOperationException();
             }
-            std::vector<Book_Info> result = book_file.Find(selected_book);
-            Book_Info book_info = result[0];
-            strcpy(book_info.ISBN, order[i].second.c_str());
-            book_file.Delete(selected_book, result[0]);
-            book_file.Insert(order[i].second, book_info);
-            if (strlen(book_info.bookname) != 0) {
-              name_file.Update(book_info.bookname, selected_book,
-                               order[i].second);
-            }
-
-            if (strlen(book_info.author) != 0) {
-              author_file.Update(book_info.author, selected_book,
-                                 order[i].second);
-            }
-            std::vector<std::string> keyword =
-                CommandParser(book_info.keyword, '|');
-            for (auto &it : keyword) {
-              keyword_file.Update(it, selected_book, order[i].second);
-            }
-            selected_book = order[i].second;
+            temp_selected_book = order[i].second; 
           } else if (order[i].first == "-name") {
-            std::vector<Book_Info> result = book_file.Find(selected_book);
-            Book_Info book_info = result[0];
             strcpy(book_info.bookname, order[i].second.c_str());
-            strcpy(book_info.ISBN, selected_book.c_str());
-            book_file.Update(selected_book, result[0], book_info);
-            File_Storage<std::string> name_file("name_file");
-            name_file.Delete(result[0].bookname, selected_book);
-            name_file.Insert(order[i].second, selected_book);
           } else if (order[i].first == "-author") {
-            std::vector<Book_Info> result = book_file.Find(selected_book);
-            Book_Info book_info = result[0];
             strcpy(book_info.author, order[i].second.c_str());
-            strcpy(book_info.ISBN, selected_book.c_str());
-            book_file.Update(selected_book, result[0], book_info);
-            File_Storage<std::string> author_file("author_file");
-            author_file.Delete(result[0].author, selected_book);
-            author_file.Insert(order[i].second, selected_book);
-
           } else if (order[i].first == "-keyword") {
-            std::vector<Book_Info> result = book_file.Find(selected_book);
-            Book_Info book_info = result[0];
-            std::vector<std::string> keyword =
-                CommandParser(book_info.keyword, '|');
-            File_Storage<std::string> keyword_file("keyword_file");
-            for (auto &it : keyword) {
-              keyword_file.Delete(it, selected_book);
-            }
-            std::vector<std::string> keyword_ =
-                CommandParser(order[i].second, '|');
-            for (auto &it : keyword_) {
-              keyword_file.Insert(it, selected_book);
-            }
             strcpy(book_info.keyword, order[i].second.c_str());
-            strcpy(book_info.ISBN, selected_book.c_str());
-            book_file.Update(selected_book, result[0], book_info);
           } else if (order[i].first == "-price") {
-            std::vector<Book_Info> result = book_file.Find(selected_book);
-            Book_Info book_info = result[0];
-            strcpy(book_info.ISBN, selected_book.c_str());
             book_info.price = std::stod(order[i].second);
-            book_file.Update(selected_book, result[0], book_info);
           }
         }
+        //auto end1 = std::chrono::system_clock::now();
+        //time1+=std::chrono::duration_cast<std::chrono::milliseconds>(end1-start1).count();
+        //auto start2 = std::chrono::system_clock::now();
+        strcpy(book_info.ISBN, temp_selected_book.c_str());
+        //auto start3 = std::chrono::system_clock::now();
+        if(selected_book!=temp_selected_book){
+          for(int i=0;i<loginStack.size();i++){
+            if(loginStack[i].selected_book==selected_book){
+              loginStack[i].selected_book=temp_selected_book;
+            }
+          }
+          book_file.Delete(selected_book, result[0]);
+          book_file.Insert(temp_selected_book, book_info);
+        }else{
+          book_file.Update(selected_book, result[0], book_info);
+        }
+        //auto end3 = std::chrono::system_clock::now();
+        //book_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end3-start3).count();
+        if(state&3){
+          auto start4 = std::chrono::system_clock::now();
+          if((state&2)==0){
+            name_file.Update(result[0].bookname, selected_book, temp_selected_book);
+          }else{
+            if(strlen(result[0].bookname)!=0){
+              name_file.Delete(result[0].bookname, selected_book);
+            }
+            name_file.Insert(book_info.bookname, temp_selected_book);
+          }
+          auto end4 = std::chrono::system_clock::now();
+          name_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end4-start4).count();
+        }
+        if(state&5){
+          //auto start5 = std::chrono::system_clock::now();
+          if((state&4)==0){
+            keyword_file.Update(result[0].author, selected_book, temp_selected_book);
+          }else{
+            if(strlen(result[0].author)!=0){
+              author_file.Delete(result[0].author, selected_book);
+            }
+            author_file.Insert(book_info.author, temp_selected_book);
+          }
+          //auto end5 = std::chrono::system_clock::now();
+          //author_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end5-start5).count();
+        }
+        if(state&9){
+          //auto start6 = std::chrono::system_clock::now();
+          std::vector<std::string> keyword_ = CommandParser(result[0].keyword, '|');
+          if((state&8)==0){
+            for(auto &it:keyword_){
+              keyword_file.Update(it, selected_book, temp_selected_book);
+            }
+          }else{
+            for (auto &it : keyword_) {
+              keyword_file.Delete(it, selected_book);
+            }
+            for (auto &it : keyword) {
+              keyword_file.Insert(it, temp_selected_book);
+            }
+          }
+          //auto end6 = std::chrono::system_clock::now();
+          //keyword_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end6-start6).count();
+        }
+        //auto end2 = std::chrono::system_clock::now();
+        //time2+=std::chrono::duration_cast<std::chrono::milliseconds>(end2-start2).count();
       } else if (command == "import") {
+        std::string selected_book = loginStack.back().selected_book;
         if (login_privilege < 3) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         if (selected_book == "") {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         if (input.size() != 2) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         if (!is_positive_integer(input[0])) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         if (!is_positive_number(input[1])) {
-          throw InvalidOpertionException();
+          throw InvalidOperationException();
         }
         File_Storage<Book_Info> book_file("book_file");
         std::vector<Book_Info> result = book_file.Find(selected_book);
@@ -500,15 +535,15 @@ int main() {
         Transaction_Info transaction_info;
         strcpy(transaction_info.time, intToFixedString(operator_time).c_str());
         operator_time--;
-        strcpy(transaction_info.userid, loginStack.top().first.c_str());
+        strcpy(transaction_info.userid, loginStack.back().user_id.c_str());
         strcpy(transaction_info.ISBN, book_info.ISBN);
         transaction_info.quantity = std::stoi(input[0]);
         transaction_info.total_price = -std::stod(input[1]);
         transaction_file.Insert(transaction_info.time, transaction_info);
       } else {
-        throw InvalidOpertionException();
+        throw InvalidOperationException();
       }
-    } catch (InvalidOpertionException &e) {
+    } catch (InvalidOperationException &e) {
       //std::cout<<"Line"<<linenumber<<": ";
       std::cout<<e.what() << std::endl;
     }

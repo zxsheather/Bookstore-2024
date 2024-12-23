@@ -256,8 +256,31 @@ std::vector<T> File_Storage<T>::Find(const std::string &key) {
 template <typename T>
 void File_Storage<T>::Update(const std::string &key, const T &value,
                              const T &new_value) {
-  Delete(key, value);
-  Insert(key, new_value);
+  Key_Value<T> kv(key, value);
+  Key_Value<T> new_kv(key, new_value);
+  int start = 0;
+  index_file.get_info(start, 2);
+  int index_pos = start;
+  Index index;
+  Block<T> block;
+  int count;
+  index_file.get_info(count, 1);
+  for (int i = 0; i < count; ++i) {
+    index_file.read(index, index_pos);
+    if (strcmp(index.min_key, key.c_str()) > 0) {
+      return;
+    } else if (strcmp(index.max_key, key.c_str()) >= 0) {
+      block_file.read(block, index.address);
+      for (int j = 0; j < block.array_size; ++j) {
+        if (block.array[j] == kv) {
+          block.array[j] = new_kv;
+          block_file.update(block, index.address);
+          return;
+        }
+      }
+    }
+    index_pos = index.next;
+  }
 }
 
 template <typename T>
@@ -281,7 +304,7 @@ std::vector<T> File_Storage<T>::FindAll() {
 }
 
 template <typename T>
-std::vector<T> File_Storage<T>::FindFirstN(const int &n){
+std::vector<T> File_Storage<T>::FindFirstN(const int &n,bool &flag){
   int start=0,count=0;
   std::vector<T> result;
   index_file.get_info(start,2);
@@ -295,14 +318,17 @@ std::vector<T> File_Storage<T>::FindFirstN(const int &n){
     for(int j=0;j<block.array_size;++j){
       result.push_back(block.array[j].value);
       if(result.size()==n){
+        flag=true;
         return result;
       }
     }
     index_pos=index.next;
   }
   if(result.size()<n){
-    throw InvalidOpertionException();
+    flag=false;
+    return result;
   }
+  flag=true;
   return result;
 }
 
@@ -315,6 +341,13 @@ void File_Storage<T>::Initialize() {
   index_blank.address = block_file.write(block_blank);
   index_file.write_info(index_file.write(index_blank), 2);
   index_file.write_info(1, 1);
+}
+
+template <typename T>
+int File_Storage<T>::Num(){
+  int count;
+  index_file.get_info(count,1);
+  return count;
 }
 
 template class File_Storage<User_Info>;

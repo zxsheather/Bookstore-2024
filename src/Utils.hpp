@@ -18,7 +18,7 @@ bool is_privilege(const std::string &s);
 
 std::vector<std::string> CommandParser(std::string command,char delimiter);
 
-std::vector<std::pair<std::string,std::string>> Modification_Parser(const std::vector<std::string> &input,const std::string &ISBN);
+std::vector<std::pair<std::string,std::string>> Modification_Parser(const std::vector<std::string> &input,const std::string &ISBN, int &state,std::vector<std::string> &keyword);
 
 std::string remove_quote(const std::string &s);
 

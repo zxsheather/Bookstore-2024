@@ -47,6 +47,7 @@ output.txtrequirements.md
 *.dll
 *.dat
 build/
+output/
 output.txt
 output_clean.txt
 
