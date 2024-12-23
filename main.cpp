@@ -24,9 +24,9 @@ int main() {
   // long long keyword_file_time=0;
   // long long author_file_time=0;
   // long long name_file_time=0;
-  freopen(
-      "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/bookstore-testcases/basic/testcase4.in",
-      "r", stdin);
+  // freopen(
+  //     "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/bookstore-testcases/basic/testcase4.in",
+  //     "r", stdin);
   // freopen(
   //     "/Users/apple/Desktop/Programming/ACMOJ/BookStore/Bookstore-2024/"
   //     "output.txt",
