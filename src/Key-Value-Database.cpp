@@ -350,7 +350,8 @@ int File_Storage<T>::Num(){
   return count;
 }
 
+
 template class File_Storage<User_Info>;
 template class File_Storage<Book_Info>;
-template class File_Storage<std::string>;
+template class File_Storage<ISBN_String>;
 template class File_Storage<Transaction_Info>;

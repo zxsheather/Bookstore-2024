@@ -63,9 +63,9 @@ struct Login_Info{
     strcpy(user_info.username, "root");
     account_file.Insert(user_info.userid, user_info);
   }
-  File_Storage<std::string> name_file("name_file");
-  File_Storage<std::string> author_file("author_file");
-  File_Storage<std::string> keyword_file("keyword_file");
+  File_Storage<ISBN_String> name_file("name_file");
+  File_Storage<ISBN_String> author_file("author_file");
+  File_Storage<ISBN_String> keyword_file("keyword_file");
   File_Storage<Book_Info> book_file("book_file");
   File_Storage<Transaction_Info> transaction_file("transaction_file");
 
@@ -301,15 +301,18 @@ struct Login_Info{
                 }
               }
             } else if (order == "-name") {
-              std::vector<std::string> ISBN_result =
+              std::vector<ISBN_String> ISBN_result =
                   name_file.Find(remove_quote(input[0]));
               if (ISBN_result.size() == 0) {
                 //std::cout<<"Line"<<linenumber<<": ";
                 std::cout<< "\n";
               } else {
-                std::sort(ISBN_result.begin(), ISBN_result.end());
+                std::sort(ISBN_result.begin(), ISBN_result.end(),
+                          [](ISBN_String a, ISBN_String b) {
+                            return strcmp(a.ISBN, b.ISBN) < 0;
+                          });
                 for (auto &i : ISBN_result) {
-                  std::vector<Book_Info> result = book_file.Find(i);
+                  std::vector<Book_Info> result = book_file.Find(i.ISBN);
                   for (auto &j : result) {
                     //std::cout<<"Line"<<linenumber<<": ";
                     std::cout<< std::fixed << std::setprecision(2) << j.ISBN
@@ -320,15 +323,18 @@ struct Login_Info{
                 }
               }
             } else if (order == "-author") {
-              std::vector<std::string> ISBN_result =
+              std::vector<ISBN_String> ISBN_result =
                   author_file.Find(remove_quote(input[0]));
               if (ISBN_result.size() == 0) {
                 //std::cout<<"Line"<<linenumber<<": ";
                 std::cout<<"\n";
               } else {
-                std::sort(ISBN_result.begin(), ISBN_result.end());
+                std::sort(ISBN_result.begin(), ISBN_result.end(),
+                          [](ISBN_String a, ISBN_String b) {
+                            return strcmp(a.ISBN, b.ISBN) < 0;
+                          });
                 for (auto &i : ISBN_result) {
-                  std::vector<Book_Info> result = book_file.Find(i);
+                  std::vector<Book_Info> result = book_file.Find(i.ISBN);
                   for (auto &j : result) {
                     //std::cout<<"Line"<<linenumber<<": ";
                     std::cout<<std::fixed << std::setprecision(2) << j.ISBN
@@ -343,16 +349,18 @@ struct Login_Info{
               if (keyword.size() >= 2) {
                 throw InvalidOperationException();
               }
-              File_Storage<std::string> keyword_file("keyword_file");
-              std::vector<std::string> ISBN_result =
+              std::vector<ISBN_String> ISBN_result =
                   keyword_file.Find(remove_quote(keyword[0]));
               if (ISBN_result.size() == 0) {
                 //std::cout<<"Line"<<linenumber<<": ";
                 std::cout<< "\n";
               } else {
-                std::sort(ISBN_result.begin(), ISBN_result.end());
+                std::sort(ISBN_result.begin(), ISBN_result.end(),
+                          [](ISBN_String a, ISBN_String b) {
+                            return strcmp(a.ISBN, b.ISBN) < 0;
+                          });
                 for (auto &i : ISBN_result) {
-                  std::vector<Book_Info> result = book_file.Find(i);
+                  std::vector<Book_Info> result = book_file.Find(i.ISBN);
                   for (auto &j : result) {
                     //std::cout<<"Line"<<linenumber<<": ";
                     std::cout<<std::fixed << std::setprecision(2) << j.ISBN
@@ -430,6 +438,9 @@ struct Login_Info{
         std::vector<Book_Info> result = book_file.Find(selected_book);
         Book_Info book_info=result[0];
         std::string temp_selected_book=selected_book;
+        ISBN_String selected_book_ISBN, temp_selected_book_ISBN;
+        strcpy(selected_book_ISBN.ISBN, selected_book.c_str());
+        strcpy(temp_selected_book_ISBN.ISBN, temp_selected_book.c_str());
         for (int i = 0; i < order.size(); ++i) {
           if (order[i].first == "-ISBN") {
             std::vector<Book_Info> temp = book_file.Find(order[i].second);
@@ -466,14 +477,15 @@ struct Login_Info{
         //auto end3 = std::chrono::system_clock::now();
         //book_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end3-start3).count();
         if(state&3){
+          
           //auto start4 = std::chrono::system_clock::now();
           if((state&2)==0){
-            name_file.Update(result[0].bookname, selected_book, temp_selected_book);
+            name_file.Update(result[0].bookname, selected_book_ISBN, temp_selected_book_ISBN);
           }else{
             if(strlen(result[0].bookname)!=0){
-              name_file.Delete(result[0].bookname, selected_book);
+              name_file.Delete(result[0].bookname, selected_book_ISBN);
             }
-            name_file.Insert(book_info.bookname, temp_selected_book);
+            name_file.Insert(book_info.bookname, temp_selected_book_ISBN);
           }
           //auto end4 = std::chrono::system_clock::now();
           //name_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end4-start4).count();
@@ -481,12 +493,12 @@ struct Login_Info{
         if(state&5){
           //auto start5 = std::chrono::system_clock::now();
           if((state&4)==0){
-            keyword_file.Update(result[0].author, selected_book, temp_selected_book);
+            keyword_file.Update(result[0].author, selected_book_ISBN, temp_selected_book_ISBN);
           }else{
             if(strlen(result[0].author)!=0){
-              author_file.Delete(result[0].author, selected_book);
+              author_file.Delete(result[0].author, selected_book_ISBN);
             }
-            author_file.Insert(book_info.author, temp_selected_book);
+            author_file.Insert(book_info.author, temp_selected_book_ISBN);
           }
           //auto end5 = std::chrono::system_clock::now();
           //author_file_time+=std::chrono::duration_cast<std::chrono::milliseconds>(end5-start5).count();
@@ -496,14 +508,14 @@ struct Login_Info{
           std::vector<std::string> keyword_ = CommandParser(result[0].keyword, '|');
           if((state&8)==0){
             for(auto &it:keyword_){
-              keyword_file.Update(it, selected_book, temp_selected_book);
+              keyword_file.Update(it, selected_book_ISBN, temp_selected_book_ISBN);
             }
           }else{
             for (auto &it : keyword_) {
-              keyword_file.Delete(it, selected_book);
+              keyword_file.Delete(it, selected_book_ISBN);
             }
             for (auto &it : keyword) {
-              keyword_file.Insert(it, temp_selected_book);
+              keyword_file.Insert(it, temp_selected_book_ISBN);
             }
           }
           //auto end6 = std::chrono::system_clock::now();

@@ -166,6 +166,21 @@ struct Transaction_Info {
 	}
 };
 
+struct ISBN_String{
+  char ISBN[21];
+  ISBN_String(){
+    memset(ISBN,0,sizeof(ISBN));
+  }
+  ISBN_String(std::string ISBN){
+    strcpy(this->ISBN,ISBN.c_str());
+  }
+  bool operator==(const ISBN_String &other) const{
+    return strcmp(ISBN,other.ISBN)==0;
+  }
+  bool operator>(const ISBN_String &other) const{
+    return strcmp(ISBN,other.ISBN)>0;
+  }
+};
 struct Operation{
   char time[11];
   char userid[31];
