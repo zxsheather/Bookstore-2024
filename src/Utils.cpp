@@ -87,7 +87,7 @@ bool is_privilege(const std::string &s) {
     return false;
   }
   int privilege = std::stoi(s);
-  if (privilege == 1 || privilege == 3 || privilege == 7) {
+  if (privilege==0 ||privilege == 1 || privilege == 3 || privilege == 7) {
     return true;
   }
   return false;

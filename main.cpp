@@ -207,7 +207,6 @@ struct Login_Info{
           throw InvalidOperationException();
         }
       } else if (command == "useradd") {
-        assert(false);
         if(login_privilege<3){
           throw InvalidOperationException();
         }
