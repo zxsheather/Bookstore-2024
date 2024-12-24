@@ -123,7 +123,7 @@ bool is_quantity(const std::string &s){
   if(s.size()>10){
     return false;
   }
-  if(s.size()==9&&s>"2147483647"){
+  if(s.size()==10&&s>"2147483647"){
     return false;
   }
   if(!is_positive_integer(s)){
@@ -169,7 +169,6 @@ std::vector<std::pair<std::string, std::string>> Modification_Parser(
     if (!std::getline(ss, value)) {
       throw InvalidOperationException();
     }
-
     if (order_ == "-ISBN") {
       if (visit[0] || value == ISBN_) {
         throw InvalidOperationException();
