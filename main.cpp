@@ -156,11 +156,14 @@ struct Login_Info{
           }
         }
       } else if (command == "register") {
-        assert(false);
         if (input.size() != 3) {
           throw InvalidOperationException();
         }
         if(!is_userID_or_password(input[0])||!is_userID_or_password(input[1])||!is_username(input[2])){
+          throw InvalidOperationException();
+        }
+        std::vector<User_Info> result = account_file.Find(input[0]);
+        if (result.size() != 0) {
           throw InvalidOperationException();
         }
         User_Info user_info(input[0], input[1], input[2], 1);
