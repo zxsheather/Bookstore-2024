@@ -299,6 +299,9 @@ struct Login_Info{
               throw InvalidOperationException();
             }
             if (order == "-ISBN") {
+              if(!is_ISBN(input[0])){
+                throw InvalidOperationException();
+              }
               std::vector<Book_Info> result = book_file.Find(input[0]);
               if (result.size() == 0) {
                 //std::cout<<"Line"<<linenumber<<": ";
@@ -313,6 +316,9 @@ struct Login_Info{
                 }
               }
             } else if (order == "-name") {
+              if(!is_name_or_author_or_keyword(remove_quote(input[0]))){
+                throw InvalidOperationException();
+              }
               std::vector<ISBN_String> ISBN_result =
                   name_file.Find(remove_quote(input[0]));
               if (ISBN_result.size() == 0) {
@@ -335,6 +341,9 @@ struct Login_Info{
                 }
               }
             } else if (order == "-author") {
+              if(!is_name_or_author_or_keyword(remove_quote(input[0]))){
+                throw InvalidOperationException();
+              }
               std::vector<ISBN_String> ISBN_result =
                   author_file.Find(remove_quote(input[0]));
               if (ISBN_result.size() == 0) {
@@ -357,6 +366,9 @@ struct Login_Info{
                 }
               }
             } else if (order == "-keyword") {
+              if(!is_name_or_author_or_keyword(remove_quote(input[0]))){
+                throw InvalidOperationException();
+              }
               std::vector<std::string> keyword = CommandParser(input[0], '|');
               if (keyword.size() >= 2) {
                 throw InvalidOperationException();
@@ -398,6 +410,12 @@ struct Login_Info{
         if (input.size() != 2) {
           throw InvalidOperationException();
         }
+        if(!is_ISBN(input[0])){
+          throw InvalidOperationException();
+        }
+        if (!is_quantity(input[1])) {
+          throw InvalidOperationException();
+        }
         std::vector<Book_Info> result = book_file.Find(input[0]);
         if (result.size() == 0) {
           throw InvalidOperationException();
@@ -424,6 +442,9 @@ struct Login_Info{
           throw InvalidOperationException();
         }
         if (input.size() != 1) {
+          throw InvalidOperationException();
+        }
+        if(!is_ISBN(input[0])){
           throw InvalidOperationException();
         }
         File_Storage<Book_Info> book_file("book_file");
@@ -546,10 +567,10 @@ struct Login_Info{
         if (input.size() != 2) {
           throw InvalidOperationException();
         }
-        if (!is_positive_integer(input[0])) {
+        if (!is_quantity(input[0])) {
           throw InvalidOperationException();
         }
-        if (!is_positive_number(input[1])) {
+        if (!is_price(input[1])) {
           throw InvalidOperationException();
         }
         File_Storage<Book_Info> book_file("book_file");
