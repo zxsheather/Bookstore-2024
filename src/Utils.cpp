@@ -123,6 +123,9 @@ bool is_quantity(const std::string &s){
   if(s.size()>10){
     return false;
   }
+  if(s.size()==9&&s>"2147483647"){
+    return false;
+  }
   if(!is_positive_integer(s)){
     return false;
   }

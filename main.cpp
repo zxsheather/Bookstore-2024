@@ -268,6 +268,9 @@ struct Login_Info{
             //std::cout<<"Line"<<linenumber<<": ";
             std::cout<<std::fixed<<std::setprecision(2)<<"+ "<<revenue<<" - "<<expense<<std::endl;
           }else if(input.size()==2){
+            if(!is_quantity(input[1])){
+              throw InvalidOperationException();
+            }
             if(input[1]=="0"){
               //std::cout<<"Line"<<linenumber<<": ";
               std::cout<<std::endl;
