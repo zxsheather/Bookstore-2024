@@ -90,6 +90,9 @@ struct Login_Info{
       std::string command = input[0];
       input.erase(input.begin());
       if (command == "quit" || command == "exit") {
+        if(input.size()!=0){
+          throw InvalidOperationException();
+        }
         // std::cout<<"Time1: "<<time1<<std::endl;
         // std::cout<<"Time2: "<<time2<<std::endl;
         // std::cout<<"Book File Time: "<<book_file_time<<std::endl;
@@ -125,6 +128,9 @@ struct Login_Info{
           }
         }
       } else if (command == "logout") {
+        if(login_privilege==0){
+          throw InvalidOperationException();
+        }
         if (input.size() != 0) {
           throw InvalidOperationException();
         }
@@ -146,6 +152,9 @@ struct Login_Info{
         User_Info user_info(input[0], input[1], input[2], 1);
         account_file.Insert(user_info.userid, user_info);
       } else if (command == "passwd") {
+        if (login_privilege == 0) {
+          throw InvalidOperationException();
+        }
         if (login_privilege == 7 && input.size() == 2) {
           std::vector<User_Info> result = account_file.Find(input[0]);
           if (result.size() == 0) {
@@ -174,6 +183,9 @@ struct Login_Info{
           throw InvalidOperationException();
         }
       } else if (command == "useradd") {
+        if(login_privilege<3){
+          throw InvalidOperationException();
+        }
         if (input.size() != 4) {
           throw InvalidOperationException();
         } else {
