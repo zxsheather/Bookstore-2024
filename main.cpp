@@ -105,12 +105,21 @@ struct Login_Info{
           throw InvalidOperationException();
         }
         std::string user_id = input[0];
+        if(!is_userID_or_password(user_id)){
+          throw InvalidOperationException();
+        }
         std::vector<User_Info> result = account_file.Find(user_id);
+        if(input.size()==2&&(!is_userID_or_password(input[1]))){
+          throw InvalidOperationException();
+        }
         if (result.size() == 0) {
           throw InvalidOperationException();
         } else {
           User_Info user_info = result[0];
           if (login_privilege > user_info.privilege && loginFlag) {
+            if(input.size()==2&&input[1]!=user_info.password){
+              throw InvalidOperationException();
+            }
             loginStack.emplace_back(user_info.userid, user_info.privilege,"");
             loginFlag = true;
             login_privilege = user_info.privilege;
@@ -149,13 +158,20 @@ struct Login_Info{
         if (input.size() != 3) {
           throw InvalidOperationException();
         }
+        if(!is_userID_or_password(input[0])||!is_userID_or_password(input[1])||!is_username(input[2])){
+          throw InvalidOperationException();
+        }
         User_Info user_info(input[0], input[1], input[2], 1);
         account_file.Insert(user_info.userid, user_info);
       } else if (command == "passwd") {
         if (login_privilege == 0) {
           throw InvalidOperationException();
         }
+
         if (login_privilege == 7 && input.size() == 2) {
+          if(!is_userID_or_password(input[0])||!is_userID_or_password(input[1])){
+            throw InvalidOperationException();
+          }
           std::vector<User_Info> result = account_file.Find(input[0]);
           if (result.size() == 0) {
             throw InvalidOperationException();
@@ -166,6 +182,9 @@ struct Login_Info{
             account_file.Update(user_info.userid, user_info, new_user_info);
           }
         } else if (input.size() == 3) {
+          if(!is_userID_or_password(input[0])||!is_userID_or_password(input[1])||!is_userID_or_password(input[2])){
+            throw InvalidOperationException();
+          }
           std::vector<User_Info> result = account_file.Find(input[0]);
           if (result.size() == 0) {
             throw InvalidOperationException();
@@ -188,42 +207,48 @@ struct Login_Info{
         }
         if (input.size() != 4) {
           throw InvalidOperationException();
-        } else {
-          std::vector<User_Info> result = account_file.Find(input[0]);
-          if (result.size() != 0) {
-            throw InvalidOperationException();
-          } else {
-            if (!is_privilege(input[2])) {
-              throw InvalidOperationException();
-            }
-            int privilege = std::stoi(input[2]);
-            if (login_privilege <= privilege) {
-              throw InvalidOperationException();
-            }
-            User_Info user_info(input[0], input[1], input[3], privilege);
-            account_file.Insert(user_info.userid, user_info);
-          }
         }
+        if(!is_userID_or_password(input[0])||!is_userID_or_password(input[1])||!is_privilege(input[2])||!is_username(input[3])){
+          throw InvalidOperationException();
+        }
+        std::vector<User_Info> result = account_file.Find(input[0]);
+        if (result.size() != 0) {
+          throw InvalidOperationException();
+        } else {
+          if (!is_privilege(input[2])) {
+            throw InvalidOperationException();
+          }
+          int privilege = std::stoi(input[2]);
+          if (login_privilege <= privilege) {
+            throw InvalidOperationException();
+          }
+          User_Info user_info(input[0], input[1], input[3], privilege);
+          account_file.Insert(user_info.userid, user_info);
+        }
+        
       } else if (command == "delete") {
         if (login_privilege != 7) {
           throw InvalidOperationException();
         }
         if (input.size() != 1) {
           throw InvalidOperationException();
-        } else {
-          std::vector<User_Info> result = account_file.Find(input[0]);
-          if (result.size() == 0) {
-            throw InvalidOperationException();
-          } else {
-            std::vector<Login_Info> tempStack = loginStack;
-            for (auto &it : tempStack) {
-              if (it.user_id == input[0]) {
-                throw InvalidOperationException();
-              }
-            }
-            account_file.Delete(input[0], result[0]);
-          }
         }
+        if(!is_userID_or_password(input[0])){
+          throw InvalidOperationException();
+        }
+        std::vector<User_Info> result = account_file.Find(input[0]);
+        if (result.size() == 0) {
+          throw InvalidOperationException();
+        } else {
+          std::vector<Login_Info> tempStack = loginStack;
+          for (auto &it : tempStack) {
+            if (it.user_id == input[0]) {
+              throw InvalidOperationException();
+            }
+          }
+          account_file.Delete(input[0], result[0]);
+        }
+        
       } else if (command == "show") {
         if(input.size()>=1&&input[0]=="finance"){
           if(login_privilege<7){

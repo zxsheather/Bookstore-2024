@@ -24,6 +24,10 @@ bool is_price(const std::string &s);
 
 bool is_quantity(const std::string &s);
 
+bool is_userID_or_password(const std::string &s);
+
+bool is_username(const std::string &s);
+
 std::vector<std::string> CommandParser(std::string command,char delimiter);
 
 std::vector<std::pair<std::string,std::string>> Modification_Parser(const std::vector<std::string> &input,const std::string &ISBN, int &state,std::vector<std::string> &keyword);

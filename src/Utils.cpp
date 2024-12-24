@@ -129,6 +129,25 @@ bool is_quantity(const std::string &s){
   return true;
 }
 
+bool is_userID_or_password(const std::string &s) {
+  if (s.size() > 30) {
+    return false;
+  }
+  for(auto &i:s){
+    if(!((i>='0'&&i<='9')||(i>='a'&&i<='z')||(i>='A'&&i<='Z')||i=='_')){
+      return false;
+    }
+  }
+  return true;
+}
+
+bool is_username(const std::string &s){
+  if(s.size()>30){
+    return false;
+  }
+  return true;
+}
+
 std::vector<std::pair<std::string, std::string>> Modification_Parser(
     const std::vector<std::string> &input, const std::string &ISBN_, int &state,
     std::vector<std::string> &keyword) {
