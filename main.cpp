@@ -169,6 +169,7 @@ struct Login_Info{
         User_Info user_info(input[0], input[1], input[2], 1);
         account_file.Insert(user_info.userid, user_info);
       } else if (command == "passwd") {
+        assert(false);
         if (login_privilege == 0) {
           throw InvalidOperationException();
         }
