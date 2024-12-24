@@ -207,6 +207,7 @@ struct Login_Info{
           throw InvalidOperationException();
         }
       } else if (command == "useradd") {
+        assert(false);
         if(login_privilege<3){
           throw InvalidOperationException();
         }
@@ -232,7 +233,6 @@ struct Login_Info{
         }
         
       } else if (command == "delete") {
-        assert(false);
         if (login_privilege != 7) {
           throw InvalidOperationException();
         }
