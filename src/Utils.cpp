@@ -98,7 +98,7 @@ bool is_ISBN(const std::string &s) {
 }
 
 bool is_name_or_author_or_keyword(const std::string &s) {
-  if (s.size() > 60) {
+  if (s.size() > 60||s.empty()) {
     return false;
   }
   for(auto &i:s){
