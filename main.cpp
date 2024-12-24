@@ -102,6 +102,7 @@ struct Login_Info{
         // std::cout<<"Name File Time: "<<name_file_time<<std::endl;
         exit(0);
       } else if (command == "su") {
+        assert(false);
         if (input.size() >= 3 || input.size() == 0) {
           throw InvalidOperationException();
         }
@@ -138,7 +139,6 @@ struct Login_Info{
           }
         }
       } else if (command == "logout") {
-        assert(false);
         if(login_privilege==0){
           throw InvalidOperationException();
         }
