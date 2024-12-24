@@ -220,9 +220,6 @@ struct Login_Info{
         if (result.size() != 0) {
           throw InvalidOperationException();
         } else {
-          if (!is_privilege(input[2])) {
-            throw InvalidOperationException();
-          }
           int privilege = std::stoi(input[2]);
           if (login_privilege <= privilege) {
             throw InvalidOperationException();
@@ -471,6 +468,7 @@ struct Login_Info{
         std::cout<<std::fixed << std::setprecision(2)
                   << book_info.price * std::stoi(input[1]) << std::endl;
       } else if (command == "select") {
+        assert(false);
         if (login_privilege < 3) {
           throw InvalidOperationException();
         }
