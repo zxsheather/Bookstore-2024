@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 #include <algorithm>
+#include <cassert>
 //#include <chrono>
 
 #include "src/Data.hpp"
@@ -155,6 +156,7 @@ struct Login_Info{
           }
         }
       } else if (command == "register") {
+        assert(false);
         if (input.size() != 3) {
           throw InvalidOperationException();
         }
