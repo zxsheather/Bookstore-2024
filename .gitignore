@@ -50,4 +50,7 @@ build/
 output/
 output.txt
 output_clean.txt
+main.dSYM/
+
+.VSCodeCounter/
 

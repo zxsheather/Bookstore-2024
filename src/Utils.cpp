@@ -15,6 +15,9 @@ std::vector<std::string> CommandParser(std::string command, char delimiter) {
   std::stringstream ss(command);
   std::string temp;
   while (getline(ss, temp, delimiter)) {
+    if(temp.empty()){
+      continue;
+    }
     result.push_back(temp);
   }
   return result;

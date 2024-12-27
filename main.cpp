@@ -33,11 +33,6 @@ int main() {
   //     "output.txt",
   //     "w", stdout);
   
-struct Login_Info{
-  std::string user_id;
-  int privilege;
-  std::string selected_book;
-};
 
   std::vector<Login_Info> loginStack;
   bool loginFlag = false;
@@ -468,7 +463,6 @@ struct Login_Info{
         std::cout<<std::fixed << std::setprecision(2)
                   << book_info.price * std::stoi(input[1]) << std::endl;
       } else if (command == "select") {
-        assert(false);
         if (login_privilege < 3) {
           throw InvalidOperationException();
         }
