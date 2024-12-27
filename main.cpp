@@ -316,9 +316,12 @@ int main() {
           } else if (input.size() == 1) {
             std::string order = "";
             int index = 0;
-            while (input[0][index] != '=') {
+            while (index<input[0].size()&&input[0][index] != '=') {
               order += input[0][index];
               index++;
+            }
+            if(index==input[0].size()||index==input[0].size()-1){
+              throw InvalidOperationException();
             }
             input[0] = input[0].substr(index + 1);
             if (input[0] == "") {
