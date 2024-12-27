@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 #include <algorithm>
+#include <sstream>
 #include <cassert>
 //#include <chrono>
 
@@ -394,12 +395,28 @@ int main() {
               if(!is_name_or_author_or_keyword(remove_quote(input[0]))){
                 throw InvalidOperationException();
               }
-              std::vector<std::string> keyword = CommandParser(input[0], '|');
+              std::vector<std::string> keyword;
+              std::stringstream ss(remove_quote(input[0]));
+              std::string temp;
+              int count=0;
+              while (getline(ss, temp, '|')) {
+                count++;
+                if(temp.empty()){
+                  throw InvalidOperationException();
+                }
+                keyword.push_back(temp);
+                if(count>=2){
+                  throw InvalidOperationException();
+                }
+              }
               if (keyword.size() >= 2) {
                 throw InvalidOperationException();
               }
+              if(keyword[0].empty()){
+                throw InvalidOperationException();
+              }
               std::vector<ISBN_String> ISBN_result =
-                  keyword_file.Find(remove_quote(keyword[0]));
+                  keyword_file.Find(keyword[0]);
               if (ISBN_result.size() == 0) {
                 //std::cout<<"Line"<<linenumber<<": ";
                 std::cout<< "\n";
