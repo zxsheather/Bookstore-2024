@@ -595,7 +595,7 @@ int main() {
         if (!is_quantity(input[0])) {
           throw InvalidOperationException();
         }
-        if (!is_price(input[1])) {
+        if (!is_price(input[1])||std::stod(input[1])==0) {
           throw InvalidOperationException();
         }
         File_Storage<Book_Info> book_file("book_file");

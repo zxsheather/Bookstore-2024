@@ -5,7 +5,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("zxsheather's bookstore")
-        self.geometry("600x300")
+        self.geometry("600x400")
         self.configure(fg_color="white")  
 
         # 配置主窗口的行和列，使所有 Frame 填满整个窗口
@@ -105,6 +105,7 @@ class LoginFrame(ctk.CTkFrame):
         self.grid_rowconfigure(0, weight=1)  
         self.grid_rowconfigure(1, weight=0)  
         self.grid_rowconfigure(2, weight=1)  
+        self.grid_rowconfigure(3, weight=1)
           
 
         self.grid_columnconfigure(0, weight=1)  # 左侧空白列
@@ -150,6 +151,19 @@ class LoginFrame(ctk.CTkFrame):
             font=("Arial", 14)
         )
         entry_password.grid(row=2, column=0, padx=20, pady=20, columnspan=2,sticky="n")
+        
+        # 登录按钮
+        btn_login = ctk.CTkButton(
+            self, 
+            text="Login", 
+            corner_radius=20,            
+            fg_color="lightgreen",       
+            text_color="black",          
+            width=200,
+            height=50,
+            font=("Arial", 14)
+        )
+        btn_login.grid(row=3, column=0, padx=20, pady=20, columnspan=2,sticky="n")
 class RegisterFrame(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, fg_color="white")
@@ -158,6 +172,7 @@ class RegisterFrame(ctk.CTkFrame):
         self.grid_rowconfigure(1, weight=0)
         self.grid_rowconfigure(2, weight=1)
         self.grid_rowconfigure(3, weight=1)
+        self.grid_rowconfigure(4, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
 
@@ -205,6 +220,19 @@ class RegisterFrame(ctk.CTkFrame):
             font=("Arial", 14)
         )
         entry_username.grid(row=3, column=0, padx=20, pady=20, columnspan=2,sticky="n")
+
+        btn_register = ctk.CTkButton(
+            self, 
+            text="Register", 
+            corner_radius=20,            
+            fg_color="lightblue",       
+            text_color="black",          
+            width=200,
+            height=50,
+            font=("Arial", 14)
+        )
+        btn_register.grid(row=4, column=0, padx=20, pady=20, columnspan=2,sticky="n")
+
 
 
 if __name__ == "__main__":

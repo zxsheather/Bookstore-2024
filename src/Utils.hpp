@@ -16,6 +16,8 @@ bool is_positive_integer(const std::string &s);
 
 bool is_privilege(const std::string &s);
 
+bool is_zero(const std::string &s);
+
 bool is_ISBN(const std::string &s);
 
 bool is_name_or_author_or_keyword(const std::string &s);

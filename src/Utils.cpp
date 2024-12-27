@@ -82,6 +82,23 @@ bool is_positive_number(const std::string &s) {
   return true;
 }
 
+bool is_zero(const std::string &s) {
+  if (s.size() == 1 && s[0] == '0') {
+    return true;
+  }
+  bool point = false;
+  for(auto &i:s){
+    if(i=='.'&&!point){
+      point=true;
+      continue;
+    }
+    if(i!='0'){
+      return false;
+    }
+  }
+  return false;
+}
+
 bool is_privilege(const std::string &s) {
   if (s.size() != 1) {
     return false;
