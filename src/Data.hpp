@@ -185,7 +185,40 @@ struct Operation{
   char time[11];
   char userid[31];
   int privilege;
-  char operation[31];
+  char operation[101];
+
+  Operation(){
+    memset(time,0,sizeof(time));
+    memset(userid,0,sizeof(userid));
+    memset(operation,0,sizeof(operation));
+    privilege=0;
+  }
+  Operation(std::string time,std::string userid,int privilege,std::string operation)
+  :privilege(privilege){
+    strcpy(this->time,time.c_str());
+    strcpy(this->userid,userid.c_str());
+    strcpy(this->operation,operation.c_str());
+  }
+
+  bool operator==(const Operation &other) const{
+    return (strcmp(time,other.time)==0)&&(strcmp(userid,other.userid)==0)&&(privilege==other.privilege)&&(strcmp(operation,other.operation)==0);
+  }
+
+  bool operator>(const Operation &other) const{
+    if(strcmp(time,other.time)==0){
+      if(strcmp(userid,other.userid)==0){
+        if(privilege==other.privilege){
+          return strcmp(operation,other.operation)>0;
+        }else{
+          return privilege>other.privilege;
+        }
+      }else{
+        return strcmp(userid,other.userid)>0;
+      }
+    }else{
+      return strcmp(time,other.time)>0;
+    }
+  }
 };
 
 #endif
