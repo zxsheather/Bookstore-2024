@@ -160,10 +160,9 @@ class LoginFrame(ctk.CTkFrame):
         self.grid_rowconfigure(2, weight=1)
         self.grid_rowconfigure(3, weight=1)
 
-        self.grid_columnconfigure(0, weight=1)  # 左侧空白列
-        self.grid_columnconfigure(1, weight=0)  # 内容列
+        self.grid_columnconfigure(0, weight=1) 
+        self.grid_columnconfigure(1, weight=0)  
 
-        # 返回按钮
         btn_back = ctk.CTkButton(
             self,
             text="Return",
@@ -177,7 +176,6 @@ class LoginFrame(ctk.CTkFrame):
         )
         btn_back.grid(row=0, column=0, padx=20, pady=20, sticky="nw")
 
-        # 登录标签
         label = ctk.CTkLabel(
             master=self, text="Login Surface", font=("Monaco", 25), text_color="black"
         )
@@ -185,15 +183,13 @@ class LoginFrame(ctk.CTkFrame):
             row=0, column=0, padx=20, pady=20, sticky="ew", columnspan=2, rowspan=2
         )
 
-        # 用户ID输入框
         self.entry_userid = PlaceholderEntry(
             self, placeholder="Userid:", width=300, font=("Arial", 14)
         )
         self.entry_userid.grid(row=1, column=0, padx=20, pady=20, columnspan=2)
 
-        # 密码输入框
         self.entry_password = PlaceholderEntry(
-            self, placeholder="Password:", width=300, font=("Arial", 14)
+            self, placeholder="Password:", width=300, font=("Arial", 14) , show="*"
         )
         self.entry_password.grid(
             row=2, column=0, padx=20, pady=20, columnspan=2, sticky="n"
@@ -783,7 +779,6 @@ class SearchFrame(ctk.CTkFrame):
             self.show_error(f"通信失败: {e}")
             return
 
-        # 清除输入框内容
         self.entry_search.delete(0, "end")
         ResultFrame.result = "".join(output_lines)
         self.controller.frames[ResultFrame].show_result()
@@ -860,7 +855,7 @@ class UseraddFrame(ctk.CTkFrame):
         self.entry_userid.grid(row=1, column=0, padx=20, pady=20, columnspan=2)
 
         self.entry_userpassword = PlaceholderEntry(
-            self, placeholder="Password:", width=300, font=("Arial", 14)
+            self, placeholder="Password:", width=300, font=("Arial", 14), show="*"
         )
         self.entry_userpassword.grid(
             row=2, column=0, padx=20, pady=20, columnspan=2, sticky="n"
@@ -1078,12 +1073,12 @@ class PasswdFrame(ctk.CTkFrame):
         self.entry_userid.grid(row=1, column=0, padx=20, pady=20, columnspan=2)
 
         self.entry_currentpasswd = PlaceholderEntry(
-            self, placeholder="Current Password:", width=300, font=("Arial", 14)
+            self, placeholder="Current Password:", width=300, font=("Arial", 14),show="*"
         )
         self.entry_currentpasswd.grid(row=2, column=0, padx=20, pady=20, columnspan=2)
 
         self.entry_newpasswd = PlaceholderEntry(
-            self, placeholder="New Password:", width=300, font=("Arial", 14)
+            self, placeholder="New Password:", width=300, font=("Arial", 14),show="*"
         )
         self.entry_newpasswd.grid(
             row=3, column=0, padx=20, pady=20, columnspan=2, sticky="n"
